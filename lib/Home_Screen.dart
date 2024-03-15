@@ -1,3 +1,4 @@
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:newjob/Questions.dart';
@@ -5,7 +6,7 @@ import 'package:newjob/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
-  const MainMenu({super.key});
+  const MainMenu({Key? key}) : super(key: key);
 
   @override
   _MainMenuState createState() => _MainMenuState();
@@ -51,7 +52,7 @@ class _MainMenuState extends State<MainMenu> {
                 // Navigate to question/answer page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) =>  const QuizPage()),
+                  MaterialPageRoute(builder: (context) => const QuizPage()),
                 ).then((score) {
                   // Update high score if applicable
                   if (score != null && score > _highScore) {
@@ -61,13 +62,16 @@ class _MainMenuState extends State<MainMenu> {
                   }
                 });
               },
-              child: Text('Start New Game'),
-
+              child: const Text('Start New Game'),
             ),
             const SizedBox(height: 20),
             Text(
               'High Score: $_highScore', // Display high score
-              style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
             ),
           ],
         ),

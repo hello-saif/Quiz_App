@@ -6,7 +6,7 @@ class Result extends StatelessWidget {
   final int score;
   final Function resetQuiz;
 
-  const Result(this.score, this.resetQuiz, {super.key});
+  const Result(this.score, this.resetQuiz, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class Result extends StatelessWidget {
         children: [
           Text(
             'You scored: $score',
-            style: const TextStyle(fontSize: 24),
+            style: const TextStyle(fontSize: 24, color: Colors.white),
           ),
           ElevatedButton(
             onPressed: () {

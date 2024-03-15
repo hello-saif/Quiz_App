@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:newjob/Update.dart';
 import 'package:newjob/main.dart';
 
 class QuizPage extends StatefulWidget {
-  const QuizPage({super.key});
+  const QuizPage({Key? key}) : super(key: key);
 
   @override
   _QuizPageState createState() => _QuizPageState();
@@ -13,9 +15,11 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   int _questionIndex = 0;
   int _score = 0;
+  bool _answered = false;
 
   final List<Map<String, dynamic>> _questions = [
     // Your list of questions here
+
     {
       "question": "Wann wurde CHECK24 gegründet?",
       "answers": {
@@ -105,21 +109,36 @@ class _QuizPageState extends State<QuizPage> {
       "correctAnswer": "C",
       "score":200
     }
+
   ];
 
   void _answerQuestion(String selectedAnswer) {
-    if (_questions[_questionIndex]['correctAnswer'] == selectedAnswer) {
-      _score += _questions[_questionIndex]['score'] as int;
+    if (!_answered) {
+      final correctAnswer = _questions[_questionIndex]['correctAnswer'];
+      final isCorrect = selectedAnswer == correctAnswer;
+      setState(() {
+        _answered = true;
+        if (isCorrect) {
+          _score += _questions[_questionIndex]['score'] as int;
+        }
+      });
+      if (_questionIndex < _questions.length - 1) {
+        Timer(const Duration(seconds: 2), () {
+          setState(() {
+            _questionIndex++;
+            _answered = false; // Reset answered status for the next question
+          });
+        });
+      }
     }
-    setState(() {
-      _questionIndex++;
-    });
   }
+
 
   void _resetQuiz() {
     setState(() {
       _score = 0;
       _questionIndex = 0;
+      _answered = false;
     });
   }
 
@@ -145,17 +164,29 @@ class _QuizPageState extends State<QuizPage> {
               : const SizedBox(), // Placeholder if no image
           Text(
             _questions[_questionIndex]['question'],
-            style: const TextStyle(fontSize: 20),
+            style: const TextStyle(fontSize: 20, color: Colors.white),
           ),
           const SizedBox(height: 20),
-          ...(_questions[_questionIndex]['answers'] as Map<String, dynamic>)
+          ...(_questions[_questionIndex]['answers']
+          as Map<String, dynamic>)
               .entries
               .map((answer) {
+            final isCorrect =
+                answer.key == _questions[_questionIndex]['correctAnswer'];
             return Center(
               child: ElevatedButton(
                 onPressed: () {
                   _answerQuestion(answer.key);
                 },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    _answered
+                        ? isCorrect
+                        ? Colors.green // Correct answer
+                        : Colors.red // Incorrect answer
+                        : Colors.blue, // Default color
+                  ),
+                ),
                 child: Text(answer.value),
               ),
             );
